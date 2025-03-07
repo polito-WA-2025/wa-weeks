@@ -1,0 +1,17 @@
+{
+  "name": "qa-server-v1",
+  "version": "1.0.0",
+  "description": "The `qa-server` presents some APIs to perform CRUD (Create, Read, Update, Delete) operations on the answers.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dayjs": "^1.11.13",
+    "express": "^4.21.2",
+    "morgan": "^1.10.0",
+    "sqlite3": "^5.1.7"
+  }
+}
