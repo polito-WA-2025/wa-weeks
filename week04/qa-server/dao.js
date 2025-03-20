@@ -66,3 +66,18 @@ exports.createAnswer = (answer) => {
     });
   });
 };
+
+
+// delete an existing answer
+exports.deleteAnswer = (id) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'DELETE FROM answers WHERE id = ?';
+    db.run(sql, [id], function (err) {
+      if (err) {
+        reject(err);
+        return;
+      } else
+        resolve(this.changes);  // return the number of affected rows
+    });
+  });
+}

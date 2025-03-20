@@ -59,6 +59,21 @@ app.post('/api/answers', async (req, res) => {
 }
 );
 
+// DELETE /api/answers/<id>
+app.delete('/api/answers/:id', async (req, res) => {
+  try {
+    const numRowChanges = await dao.deleteAnswer(req.params.id);  
+    // NOTE: if there is no element with the specified id, the delete operation is considered successful
+    // since the final status of the server is that the element with that id does not exist.
+    // This is also consistent with the fact that DELETE should be idempotent.
+    // However, for easier debugging, we send the number of affected (changed) rows to the client.
+    res.json(numRowChanges);
+  } catch(err) {
+    console.log(err);
+    res.status(503).json({ error: `Database error during the deletion of answer ${req.params.id}.`});
+  }
+});
+
 
 
 app.listen(3001, ()=>{console.log('Server ready');})

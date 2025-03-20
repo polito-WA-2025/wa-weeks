@@ -13,3 +13,5 @@ Content-Type: application/json
     "questionId": 1
 }
 
+###
+DELETE http://localhost:3001/api/answers/10 HTTP/1.1

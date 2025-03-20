@@ -7,6 +7,8 @@ The `qa-server` presents some APIs to perform some CRUD (Create, Read, Update, D
 `GET /api/questions`  
 `GET /api/questions/<id>/answers`  
 `POST /api/answers`  
+`DELETE /api/answers/<id>`  
+`POST /api/answers/<id>/vote`  
 ...  
 
 ### List Questions
@@ -79,5 +81,24 @@ The `qa-server` presents some APIs to perform some CRUD (Create, Read, Update, D
 
 ### Vote an Answer
 
+* POST /api/answers/<id>/vote`
+* Description: Upvote/downvote an answer identified by <id>
+* Request body: An object representing the action (upvote or downvote) (Content-Type: `application/json`).
+
+```
+{
+    "action": "upvote"
+}
+```
+
+* Response: `200 OK` (success) or `503 Service Unavailable` (generic error), `422 Unprocessable entity (validation error)`
+* Response body: _None_
+
+
 ### Delete an Answer
 
+* `DELETE /api/answers/<id>`
+* Description: Delete an answer with a given id.
+* Request body: _None_
+* Response: `200 OK` (success) or `503 Service Unavailable` (generic error)
+* Response body: _None_  (or number of affected rows)
