@@ -8,8 +8,9 @@ The `qa-server` presents some APIs to perform some CRUD (Create, Read, Update, D
 `GET /api/questions/<id>/answers`  
 `POST /api/answers`  
 `DELETE /api/answers/<id>`  
-`POST /api/answers/<id>/vote`  
-...  
+`POST /api/answers/<id>/vote`
+`PUT /api/answers/<id>`  
+
 
 ### List Questions
 
@@ -102,3 +103,24 @@ The `qa-server` presents some APIs to perform some CRUD (Create, Read, Update, D
 * Request body: _None_
 * Response: `200 OK` (success) or `503 Service Unavailable` (generic error)
 * Response body: _None_  (or number of affected rows)
+
+
+### Update an Answer
+
+* `PUT /api/answers/<id>`
+* Description: Update entirely an existing answer, identified by its id.
+* Request body: An object representing the entire answer (Content-Type: `application/json`).
+
+```
+{
+    "id": 1,
+    "text": "for of",
+    "respondent": "Alice",
+    "score": 3,
+    "date": "2023-03-07",
+    "questionId": 1
+}
+```
+
+* Response: `200 OK` (success) or `503 Service Unavailable` (generic error). If the request body is not valid, `422 Unprocessable Entity` (validation error).
+* Response body: _None_
