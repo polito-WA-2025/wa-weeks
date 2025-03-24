@@ -81,3 +81,18 @@ exports.deleteAnswer = (id) => {
     });
   });
 }
+
+// vote an existing answer
+exports.voteAnswer = (answerId, vote) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'UPDATE answers SET score= score + ?  WHERE id = ?';
+    const delta = vote==='upvote' ? 1 : -1;
+    db.run(sql, [delta, answerId], function (err) {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(this.changes);
+    });
+  });
+};

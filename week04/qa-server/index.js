@@ -2,6 +2,7 @@
 
 const express = require('express');
 const morgan = require('morgan');
+const {check, validationResult} = require('express-validator');
 
 const dao = require('./dao'); // module for accessing the DB.  NB: use ./ syntax for files in the same dir
 
@@ -60,20 +61,45 @@ app.post('/api/answers', async (req, res) => {
 );
 
 // DELETE /api/answers/<id>
-app.delete('/api/answers/:id', async (req, res) => {
-  try {
-    const numRowChanges = await dao.deleteAnswer(req.params.id);  
-    // NOTE: if there is no element with the specified id, the delete operation is considered successful
-    // since the final status of the server is that the element with that id does not exist.
-    // This is also consistent with the fact that DELETE should be idempotent.
-    // However, for easier debugging, we send the number of affected (changed) rows to the client.
-    res.json(numRowChanges);
-  } catch(err) {
-    console.log(err);
-    res.status(503).json({ error: `Database error during the deletion of answer ${req.params.id}.`});
+app.delete('/api/answers/:id', [
+  check('id').isInt()
+] , async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    res.status(422).json({errors: errors.array()});
+  } else {
+    try {
+      const numRowChanges = await dao.deleteAnswer(req.params.id);  
+      // NOTE: if there is no element with the specified id, the delete operation is considered successful
+      // since the final status of the server is that the element with that id does not exist.
+      // This is also consistent with the fact that DELETE should be idempotent.
+      // However, for easier debugging, we send the number of affected (changed) rows to the client.
+      res.json(numRowChanges);
+    } catch(err) {
+      console.log(err);
+      res.status(503).json({ error: `Database error during the deletion of answer ${req.params.id}.`});
+    }
   }
 });
 
-
+// POST /api/answers/<id>/vote
+// NOTE: this is a POST, not a PUT, since it is NOT idempotent
+app.post('/api/answers/:id/vote', [
+  check('id').isInt(),
+  check('vote').isIn(['upvote','downvote'])
+], async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({errors: errors.array()});
+  } else {
+    try {
+      const numRowChanges = await dao.voteAnswer(req.params.id, req.body.vote);
+      // number of changed rows is sent to client as an indicator of success
+      res.json(numRowChanges);
+    } catch (err) {
+      res.status(503).json({ error: `Database error while voting answer ${req.params.id}.` });
+    }
+  }
+});
 
 app.listen(3001, ()=>{console.log('Server ready');})
