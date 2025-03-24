@@ -1,0 +1,94 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>HeapOverrun example</title>
+    <meta name="description" content="WA example">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" 
+        crossorigin="anonymous">
+
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <header>
+                <h1>HeapOverrun</h1>
+            </header>
+        </div>
+        <main>
+            <div class="row">
+                <div class="col-9">
+                    <p>Question: Best way of enumerating an array in JS</p>
+                </div>
+                <div class="col-3">
+                    <p>Author: Enrico</p>
+                </div>
+            </div>
+            <div class="row">
+                <h2>Current Answers</h2>
+            </div>
+            <div class="row">
+                <div id="scoretable">
+                    <table class="table">
+                        <tr>
+                            <th>Date</th>
+                            <th>Text</th>
+                            <th>Author</th>
+                            <th>Score</th>
+                            <th>Action</th>
+                        </tr>
+                        <tr>
+                            <td>2024-03-07</td>
+                            <td>for of</td>
+                            <td>Alice</td>
+                            <td>3</td>
+                            <td><button type="button" class="btn btn-secondary">Vote</button></td>
+                        </tr>
+                        <tr>
+                            <td>2024-03-04</td>
+                            <td>for i=0,i&lt;N,i++</td>
+                            <td>Harry</td>
+                            <td>1</td>
+                            <td><button type="button" class="btn btn-primary">Vote</button></td>
+                        </tr>
+                        <tr>
+                            <td>2024-03-02</td>
+                            <td>for in</td>
+                            <td>Harry</td>
+                            <td>-2</td>
+                            <td><button type="button" class="btn btn-primary">Vote</button></td>
+                        </tr>
+                        <tr>
+                            <td><input type="date" name="date"></td>
+                            <td><input type="text" name="text"></td>
+                            <td><input type="text" name="respondent"></td>
+                            <td><input type="text" size="4" name="score"></td>
+                            <td><button type="button" class="btn btn-primary">+</button> </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </main>
+        <div class="row">
+            <footer>
+                &copy; Web Applications
+            </footer>
+        </div>
+    </div>
+
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" 
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" 
+        crossorigin="anonymous"></script>
+
+</body>
+
+</html>
