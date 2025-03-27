@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+   
+</head>
+<body>
+<div id="time" >Hello</div>
+<div class="bold"></div>
+<div class="bold color"></div>
+<script  src="https://unpkg.com/dayjs@1.11.10/dayjs.min.js"
+    integrity="sha384-DpVxUeeBWjUvUV1czyIHJAjh+jYUZFu2lLakbdua5vbwOrBGi1UgaKCHjTC+x3Ky"
+    crossorigin="anonymous">
+    </script>
+<script>
+const timeElement = document.getElementById("time");
+timeElement.innerText = dayjs().format("HH:mm:ss");
+// Updating DOM content via a periodically-called callback function
+setInterval(() => timeElement.innerText = dayjs().format("HH:mm:ss"), 1000);
+
+
+document.getElementById('foo').innerText='Dear Enrico';
+document.querySelector('#foo');
+document.querySelectorAll('.bold');
+document.querySelectorAll('.color');
+document.querySelectorAll('.bold, .color');
+</script>
+</body>
+</html>
