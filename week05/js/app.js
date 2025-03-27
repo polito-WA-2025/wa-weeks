@@ -33,5 +33,19 @@ let answerList = ANSWERS.map(e => new Answer(...e));
 answerList.forEach(e => console.log(e.str()));
 
 // Populate the list in the HTML ...
-// ...
+let text = 'for of';
+let respondent = answerList[0].respondent;
+
+const newTr = document.createElement('tr');
+const newTd1 = document.createElement('td');
+newTd1.innerText = text;
+const newTd2 = document.createElement('td');
+newTd2.innerText = respondent;
+
+const tableBody = document.getElementById('answers');
+tableBody.appendChild(newTr);
+newTr.appendChild(newTd1);
+newTr.appendChild(newTd2);
+
+
 
