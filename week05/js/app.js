@@ -24,9 +24,22 @@ function Answer(id, text, respondent, score, date, questionId) {
 }
 
 function vote(id) {
+    // Modify the score corresponding to the id
+    answerList.forEach(e => { if (e.id==id) e.score+=1 } );
+    //alternative:
+    //answerList = answerList.map(e => e.id==id? Object.assign({}, e, {score: e.score+1}) : e );
 
+    // Delete the full list
+    clearAnswers();
+
+    // Recreate the full list starting from the data structure
+    createAnswerList(answerList);
 }
 
+function clearAnswers() {
+    const tableBody = document.querySelector('tbody');
+    tableBody.innerHTML = "";  // Be careful using innerHTML for XSS, however with constant strings this is safe
+}
 
 function createAnswerNode(ans) {
 
@@ -56,9 +69,11 @@ function createAnswerNode(ans) {
 
     newButton.addEventListener('click', event =>  {
         console.log('button pressed, id '+ans.id);
-        //vote(event.target.id);
-        newTd4.innerText = parseInt(newTd4.innerText)+1;
-    })
+        //console.log(event.target);
+
+        //newTd4.innerText = parseInt(newTd4.innerText)+1;
+        vote(event.target.id);
+    });
 
 
     const newTr = document.createElement("tr");
@@ -72,6 +87,16 @@ function createAnswerNode(ans) {
 
 }
 
+function createAnswerList(answerList) {
+    //const tableBody = document.querySelector('tbody');
+    const tableBody = document.getElementById('answers');
+    for (let ans of answerList) {
+        const newRow = createAnswerNode(ans);
+        tableBody.appendChild(newRow);
+    }
+
+}
+
 // --- Main --- //
 
 // Create data structure
@@ -79,14 +104,8 @@ let answerList = ANSWERS.map(e => new Answer(...e));
 
 answerList.forEach(e => console.log(e.str()));
 
-const tableBody = document.getElementById('answers');
-
-for (let ans of answerList) {
-    const newRow = createAnswerNode(ans);
-    tableBody.appendChild(newRow);
-}
-
 // Populate the list in the HTML ...
+createAnswerList(answerList);
 
 /*
 let text = 'for of';
