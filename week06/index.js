@@ -33,6 +33,7 @@ app.use(expressCspHeader({
 */
 
 
+
 // set-up the middlewares
 app.use(morgan('dev'));
 app.use(express.json()); // To automatically decode incoming json
@@ -74,8 +75,12 @@ app.get('/api/questions/:id/answers', async (req, res) => {
       //console.log("length: "+result.length);
       if (result.error)
         res.status(404).json(result);
-      else
-        res.json(result);  // NB: list of answers can also be an empty array
+      else {
+        res.json(result);  // NB: list of answers can also be an empty array 
+        //const newArray = result.map(e => Object.assign({}, e, {text: validator.escape(e.text) }));
+        //const newArray = result.map(e => Object.assign({}, e, {text: DOMPurify.sanitize(e.text) }));
+        //res.json(newArray);
+      }
     }
   } catch(err) {
     console.log(err);

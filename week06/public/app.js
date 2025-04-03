@@ -1,6 +1,6 @@
 'use strict';
 /*
- * [2023/2024]
+ * [2024/2025]
  * Web Applications
  */
 
