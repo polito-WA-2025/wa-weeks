@@ -1,35 +1,52 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import { Table, Button } from "react-bootstrap";
-import dayjs from 'dayjs';
-import { Question } from './QAModels';
-import './App.css'
+import { Col, Container, Row, Button, Form, Table, Navbar } from 'react-bootstrap';
+import './App.css';
+
+import { Question } from './QAModels.js';
 
 const question = new Question(1, 'Best way of enumerating an array in JS?', 'Enrico', '2024-03-01');
 question.init();
 const answerList = question.getAnswers();
-//console.log(answerList);
 
-function Header(props) {
+
+function MyHeader(props) {
+	return (
+		<Navbar bg="primary" variant="dark">
+      <Navbar.Brand className="mx-2">
+      <i className="bi bi-collection-play" />
+      {/* props.appName just in case you want to set a different app name */}
+			{props.appName || "HeapOverrun"}
+      </Navbar.Brand>
+		</Navbar>
+	);
+}
+
+
+function MyFooter(props) {
+  return (<footer>
+    <p>&copy; Web Applications</p>
+    <div id="time"></div>
+  </footer>);
+}
+
+function AnswerRow(props) {
+  const e = props.answer;
   return (
-    <header>
-      <nav className="navbar bg-body-tertiary">
-        <div className="container-fluid">
-          <div>
-            <i className="bi bi-lightbulb" style={{ fontSize: "2rem", color: "cornflowerblue" }}></i>
-            <a className="navbar-brand" href="#">
-              {props.appName  || "HeapOverrun"}
-            </a>
-          </div>
-        </div>
-      </nav>
-    </header>
+    <tr>
+      <td>{e.date.format("YYYY-MM-DD")}</td>
+      <td>{e.text}</td>
+      <td>{e.respondent}</td>
+      <td>{e.score}</td>
+      <td><Button variant="primary">Vote</Button></td>
+    </tr>
   );
 }
 
 function MyTable(props) {
   return (
     <Table>
+      {/* <Table striped bordered hover> */}
     <thead>
       <tr>
         <th>Date</th>
@@ -39,40 +56,60 @@ function MyTable(props) {
         <th>Action</th>
       </tr>
     </thead>
-    <tbody id="answers">
-      {props.list.map( e => 
-          <tr key={e.id}>
-            <td>{e.date.format("YYYY-MM-DD")}</td>
-            <td>{e.text}</td>
-            <td>{e.respondent}</td>
-            <td>{e.score}</td>
-            <td><Button variant="primary">Vote</Button></td>
-          </tr>
-      )}
+      <tbody>        
+        {/* the key can also be the answer id, if unique */}
+				{props.listOfAnswers.map( (e) => 
+				 <AnswerRow key={e.id} answer={e} /> )
+        }
     </tbody>
     </Table>
   )
 }
 
+function Main(props) {
+  return (<>
+    <Row>
+      <Col xs={9}>
+        <p className="question">Best way of enumerating an array in JS?</p>
+      </Col>
+      <Col xs={3}>
+        <p className="question">Author: Enrico</p>
+      </Col>
+    </Row>
+    <Row>
+      <Col>
+        <h2>Current Answers</h2>
+      </Col>
+    </Row>
+    <Row>
+      <Col>
+        <MyTable listOfAnswers={answerList} />
+      </Col>
+    </Row>
+  </>
+  );
+}
+
+
+
 function App() {
+
   return (
-    <div className="container-fluid">
-    <Header appName="HeapOverrun" />
-    <main>
-        <div className="row lead mt-4">
-            <div className="d-flex justify-content-center">
-                <p className="question" id="questionText">Best way of enumerating an array in JS?</p>
-                <p className="question ms-5">by <span id="questionAuthorName">Enrico Masala</span></p>
-            </div>
-        </div>
-        <h2>Answers</h2>
-        <MyTable list={answerList} />
-    </main>
-    <footer>
-        &copy; Web Applications  <span id="time"></span>
-    </footer>
-</div>
+    <Container fluid>
+      <Row>
+        <Col>
+          <MyHeader />
+        </Col>
+      </Row>
+      <Main />
+      <Row>
+        <Col>
+          <MyFooter />
+        </Col>
+      </Row>
+    </Container>
   )
 }
+
 
 export default App
