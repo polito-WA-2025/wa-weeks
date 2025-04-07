@@ -4,7 +4,7 @@ import { Col, Container, Row } from 'react-bootstrap';
 import MyButton from './Button.jsx';
 function App() {
 	return (
-		<Container>
+		<Container fluid>
 		<Row>
 		<Col>
 		Press here: <MyButton lang='it' />
