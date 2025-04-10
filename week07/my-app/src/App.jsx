@@ -29,17 +29,17 @@ function SimpleButton (props) {
 }
 
 function ButtonGroup (props) {
-	const [selected, setSelected] = useState(-1);
+	const [selected, setSelected] = useState(3);
 
 	const chooseButton = (index) => setSelected(index);
 	return (
-		<>
+		<Form>
 		{
 			props.names.map((e,idx) => <SimpleButton
 			  name={e} index={idx} key={idx}
 			  selected={idx===selected} choose={chooseButton}></SimpleButton>)
 		}
-		</>
+		</Form>
 	)
 }
 
