@@ -6,16 +6,17 @@ import MyButton from './Button.jsx';
 
 function ShortText(props) {
 	const [hidden, setHidden] = useState(true);
+
+	const toggleExpansion = () => {
+		setHidden( e => !e ) ;
+		}
+
 	return (
 		<span>
 			{hidden ?
 				`${props.text.substr(0, props.maxLength)}...`
 				: props.text}
-			{hidden ? (
-				<a onClick={() => setHidden(false)}>more</a>
-			) : (
-				<a onClick={() => setHidden(true)}>less</a>
-			)}
+				<a onClick={toggleExpansion}>{hidden ? 'more' : 'less' }</a>
 		</span>
 	);
 }
