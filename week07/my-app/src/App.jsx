@@ -1,7 +1,7 @@
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useState } from 'react';
-import { Col, Container, Row } from 'react-bootstrap';
+import { Button, Col, Container, Row, Form } from 'react-bootstrap';
 import MyButton from './Button.jsx';
 
 function ShortText(props) {
@@ -21,6 +21,28 @@ function ShortText(props) {
 	);
 }
 
+function SimpleButton (props) {
+	return (
+		<Button variant={props.selected?'primary':'secondary'}
+		   onClick={() => props.choose(props.index)} >{props.name}</Button>
+	)
+}
+
+function ButtonGroup (props) {
+	const [selected, setSelected] = useState(-1);
+
+	const chooseButton = (index) => setSelected(index);
+	return (
+		<>
+		{
+			props.names.map((e,idx) => <SimpleButton
+			  name={e} index={idx} key={idx}
+			  selected={idx===selected} choose={chooseButton}></SimpleButton>)
+		}
+		</>
+	)
+}
+
 function App() {
 	return (
 		<Container fluid>
@@ -32,6 +54,11 @@ function App() {
 		<Row>
 		<Col>
 		<ShortText text="My really nice long text" maxLength={5} />
+		</Col>
+		</Row>
+		<Row>
+		<Col>
+		<ButtonGroup names={['Chess', 'Poker', 'Black Jack', 'Go']} />
 		</Col>
 		</Row>
 		</Container>
