@@ -30,10 +30,10 @@ function Question(id, text, questioner, date) {
 
     this.init = () => {
         this.answers.push(
-            new Answer(1, 'for of', 'Alice', 3, dayjs('2024-03-07')),
-            new Answer(2, 'for i=0,i<N,i++', 'Harry', 1, dayjs('2024-03-04')),
-            new Answer(3, 'for in', 'Harry', -2, dayjs('2024-03-02')),
-            new Answer(4, 'i=0 while(i<N)', 'Carol', -1, dayjs('2024-03-01'))
+            new Answer(1, 'for of', 'Alice', 3, dayjs('2024-03-07'), this.id),
+            new Answer(2, 'for i=0,i<N,i++', 'Harry', 1, dayjs('2024-03-04'), this.id),
+            new Answer(3, 'for in', 'Harry', -2, dayjs('2024-03-02'), this.id),
+            new Answer(4, 'i=0 while(i<N)', 'Carol', -1, dayjs('2024-03-01'), this.id)
         );
     }
 

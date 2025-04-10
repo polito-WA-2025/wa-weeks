@@ -40,10 +40,9 @@ function Main(props) {
 
  const [answers, setAnswers] = useState(initialAnswers);
 
- const vote = (id) => {
-  setAnswers( answerList => {
-    return answerList.map( e => e.id === id  ? Object.assign({}, e, {score: e.score+1}) : e );
-  }
+  function voteAnswer(id, delta) {
+    setAnswers( answerList => 
+      answerList.map(e => e.id === id ? Object.assign({}, e, {score: e.score+delta}) : e)
    );
  }
 
@@ -62,7 +61,7 @@ function Main(props) {
     </Row>
     <Row>
       <Col>
-        <AnswerTable listOfAnswers={answers} vote={vote} delete={deleteAnswer} />
+        <AnswerTable listOfAnswers={answers} vote={voteAnswer} delete={deleteAnswer} />
       </Col>
     </Row>
   </>
