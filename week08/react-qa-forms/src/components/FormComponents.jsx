@@ -17,16 +17,27 @@ function AnswerForm(props) {
 
     function handleSubmit(event) {
         event.preventDefault();
-        const ans = {
-            text: text,
-            score: score,
-            respondent: respondent,
-            date: dayjs(date)
-        }
-        if (!text)
-            setErrorMsg("Some text is empty");
-        else {
-            if(props.editObj) {
+        //console.log('Submit was clicked');
+
+        // Form validation
+        if (date === '')
+            setErrorMsg('Invalid date');
+        else if (isNaN(parseInt(score)))
+            setErrorMsg('Invalid score');
+        else if (parseInt(score) < 0) {
+            setErrorMsg('Negative scores are invalid');
+        } else if (!text) {
+                setErrorMsg("Text field is empty");
+        } else {
+
+            const ans = {
+                text: text,
+                score: parseInt(score),
+                respondent: respondent,
+                date: dayjs(date)
+            }
+
+            if(props.editObj) {  // decide if this is an edit or an add
                 ans.id = props.editObj.id;
                 props.saveExistingAnswer(ans);
             } else
@@ -36,7 +47,7 @@ function AnswerForm(props) {
     }
 
     function handleScore(event) {
-        setScore(event.target.value);
+        setScore(event.target.value); // NOTE: Cannot do parseInt here otherwise the single minus sign cannot be written
     }
 
     return (
@@ -65,7 +76,7 @@ function AnswerForm(props) {
                 <Form.Control type="number" name="score" value={score} onChange={handleScore} />
             </Form.Group>
 
-            <Button type="submit">{props.editObj? 'Edit':'Add'}</Button>
+            <Button type="submit">{props.editObj? 'Save edit':'Add'}</Button>
             <Button variant='secondary' onClick={()=>props.closeForm()}>Cancel</Button>
 
         </Form>

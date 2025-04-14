@@ -58,7 +58,14 @@ function Main(props) {
   }
 
   function addAnswer(answer) {
-    setAnswers( answerList => 
+    setAnswers( 
+    // NB: The new answer should have a new id. This will solved by adding it to a database,
+    // because in this case the server will return a unique id for the new entry in the table
+    // At the moment this limits the possibility to edit the answer
+    // To compute a new id on the client side, just do max(all ids)+1. But remember that
+    // this is NOT an acceptable solution in a web application since 
+    // in general there can be multiple clients, and the server is the place to compute the unique id.
+      answerList => 
         [...answerList, answer]
     );
     setShowForm(false);
@@ -70,7 +77,7 @@ function Main(props) {
   }
 
   function saveExistingAnswer(ans) {
-    console.log('saveExistingAnswer: ', ans);
+    //console.log('saveExistingAnswer: ', ans);
     setAnswers( answerList =>
       answerList.map( e => e.id === ans.id ? ans : e)
     );
@@ -92,16 +99,18 @@ function Main(props) {
         delete={deleteAnswer} edit={editAnswer} />
       </Col>
     </Row>
-    { showForm ?
     <Row>
       <Col>
+        {/* key in AnswerForm is needed to make React re-create the component when editObj.id changes,
+            i.e., when the editing form is open and another edit button is pressed. */}
+    { showForm ?
          <AnswerForm addAnswer={addAnswer} 
          closeForm={()=>{setShowForm(false); setEditObj(undefined);}}
          editObj={editObj} saveExistingAnswer={saveExistingAnswer} 
          key={editObj ? editObj.id : -1} />
-      </Col>
-    </Row> : <Button onClick={()=>setShowForm(true)}>Add something</Button>
-    }
+         : <Button onClick={()=>setShowForm(true)}>Add something</Button> }
+         </Col>
+    </Row> 
   </>
   );
 }
