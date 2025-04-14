@@ -53,6 +53,12 @@ function Main(props) {
     );
   }
 
+  function addAnswer(answer) {
+    setAnswers( answerList => 
+        [...answerList, answer]
+    )
+  }
+
   return (<>
     <Row>
       <QuestionDescription question={question} />
@@ -70,7 +76,7 @@ function Main(props) {
     </Row>
     <Row>
       <Col>
-         <AnswerForm />
+         <AnswerForm addAnswer={addAnswer} />
       </Col>
     </Row>
   </>
