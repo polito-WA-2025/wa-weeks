@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { useState } from 'react';
-import { Col, Container, Row, Navbar } from 'react-bootstrap';
+import { Col, Container, Row, Navbar, Button } from 'react-bootstrap';
 import './App.css';
 
 import { AnswerTable } from './components/AnswerComponents.jsx';
@@ -41,6 +41,10 @@ function Main(props) {
 
   const [ answers, setAnswers ] = useState(initialAnswerList);
 
+  const [ showForm, setShowForm ] = useState(false);
+
+  const [ editObj, setEditObj ] = useState(undefined);
+
   function voteAnswer(id, delta) {
     setAnswers( answerList => 
       answerList.map(e => e.id === id ? Object.assign({}, e, {score: e.score+delta}) : e)
@@ -56,7 +60,21 @@ function Main(props) {
   function addAnswer(answer) {
     setAnswers( answerList => 
         [...answerList, answer]
-    )
+    );
+    setShowForm(false);
+  }
+
+  function editAnswer(id) {
+    setEditObj( answers.find( e => e.id === id) );
+    setShowForm(true);
+  }
+
+  function saveExistingAnswer(ans) {
+    console.log('saveExistingAnswer: ', ans);
+    setAnswers( answerList =>
+      answerList.map( e => e.id === ans.id ? ans : e)
+    );
+
   }
 
   return (<>
@@ -71,14 +89,19 @@ function Main(props) {
     <Row>
       <Col>
         <AnswerTable listOfAnswers={answers} vote={voteAnswer} 
-        delete={deleteAnswer} />
+        delete={deleteAnswer} edit={editAnswer} />
       </Col>
     </Row>
+    { showForm ?
     <Row>
       <Col>
-         <AnswerForm addAnswer={addAnswer} />
+         <AnswerForm addAnswer={addAnswer} 
+         closeForm={()=>{setShowForm(false); setEditObj(undefined);}}
+         editObj={editObj} saveExistingAnswer={saveExistingAnswer} 
+         key={editObj ? editObj.id : -1} />
       </Col>
-    </Row>
+    </Row> : <Button onClick={()=>setShowForm(true)}>Add something</Button>
+    }
   </>
   );
 }

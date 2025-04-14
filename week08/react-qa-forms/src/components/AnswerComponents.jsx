@@ -8,6 +8,7 @@ function AnswerActions(props) {
       <Button className="mx-1" variant="primary" onClick={props.upvote}><i className="bi bi-arrow-up"></i></Button>
       <Button className="mx-1" variant="primary" onClick={props.downvote}><i className="bi bi-arrow-down"></i></Button>
       <Button className="mx-1" variant="danger" onClick={props.delete}><i className="bi bi-trash"></i></Button>
+      <Button className="mx-1" variant="warning" onClick={props.edit}><i className="bi bi-pencil"></i></Button>
     </>
   );
 }
@@ -21,7 +22,7 @@ function AnswerRow(props) {
         <td>{e.respondent}</td>
         <td>{e.score}</td>
         <td><AnswerActions upvote={()=>props.vote(e.id, 1)} downvote={()=>props.vote(e.id, -1)}
-                delete={()=>props.delete(e.id)} /></td>
+                delete={()=>props.delete(e.id)} edit={()=>props.edit(e.id)} /></td>
       </tr>
     );
   }
@@ -43,7 +44,7 @@ function AnswerRow(props) {
           {/* the key can also be the answer id, if unique */}
                   {props.listOfAnswers.map( (e,index) => 
                    <AnswerRow key={index} answer={e} vote={props.vote} 
-                   delete={props.delete} /> )
+                   delete={props.delete} edit={props.edit} /> )
           }
         </tbody>
       </Table>

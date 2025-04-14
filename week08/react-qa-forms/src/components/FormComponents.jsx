@@ -1,15 +1,18 @@
 import { useState } from 'react';
-import { Form, Button } from 'react-bootstrap';
+import { Form, Button, Alert } from 'react-bootstrap';
 
 import dayjs from 'dayjs';
 
 
 function AnswerForm(props) {
 
-    const [text, setText ] = useState('');
-    const [date, setDate ] = useState(dayjs().format('YYYY-MM-DD'));
-    const [score, setScore] = useState(0);
-    const [respondent, setRespondent] = useState('');
+    const [text, setText ] = useState(props.editObj? props.editObj.text : '');
+    const [date, setDate ] = useState(props.editObj? 
+        props.editObj.date.format('YYYY-MM-DD') : dayjs().format('YYYY-MM-DD'));
+    const [score, setScore] = useState(props.editObj ? props.editObj.score : 0);
+    const [respondent, setRespondent] = useState(props.editObj? props.editObj.respondent : '');
+
+    const [errorMsg, setErrorMsg ] = useState('');
 
 
     function handleSubmit(event) {
@@ -20,8 +23,16 @@ function AnswerForm(props) {
             respondent: respondent,
             date: dayjs(date)
         }
-        props.addAnswer(ans);
-        //console.log("Answer text: "+text);
+        if (!text)
+            setErrorMsg("Some text is empty");
+        else {
+            if(props.editObj) {
+                ans.id = props.editObj.id;
+                props.saveExistingAnswer(ans);
+            } else
+                props.addAnswer(ans);
+            //console.log("Answer text: "+text);
+        }
     }
 
     function handleScore(event) {
@@ -29,6 +40,8 @@ function AnswerForm(props) {
     }
 
     return (
+        <>
+        {errorMsg? <Alert variant='danger'  dismissible onClose={()=>{setErrorMsg('')}} >{errorMsg}</Alert> : false}
         <Form onSubmit={handleSubmit}>
             <Form.Group>
                 <Form.Label>Date</Form.Label>
@@ -52,9 +65,11 @@ function AnswerForm(props) {
                 <Form.Control type="number" name="score" value={score} onChange={handleScore} />
             </Form.Group>
 
-            <Button type="submit">Save</Button>
+            <Button type="submit">{props.editObj? 'Edit':'Add'}</Button>
+            <Button variant='secondary' onClick={()=>props.closeForm()}>Cancel</Button>
 
         </Form>
+        </>
     )
 }
 
