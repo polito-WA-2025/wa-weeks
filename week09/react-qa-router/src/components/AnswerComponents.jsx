@@ -1,6 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { Button, Table } from 'react-bootstrap';
+import { Link } from 'react-router';
 
 function AnswerActions(props) {
   return (
@@ -8,7 +9,9 @@ function AnswerActions(props) {
       <Button className="mx-1" variant="primary" onClick={props.upvote}><i className="bi bi-arrow-up"></i></Button>
       <Button className="mx-1" variant="primary" onClick={props.downvote}><i className="bi bi-arrow-down"></i></Button>
       <Button className="mx-1" variant="danger" onClick={props.delete}><i className="bi bi-trash"></i></Button>
-      <Button className="mx-1" variant="warning" onClick={props.edit}><i className="bi bi-pencil"></i></Button>
+      <Link to={`/edit/${props.editId}`} >
+        <Button className="mx-1" variant="warning"><i className="bi bi-pencil"></i></Button>
+      </Link>
     </>
   );
 }
@@ -22,7 +25,7 @@ function AnswerRow(props) {
         <td>{e.respondent}</td>
         <td>{e.score}</td>
         <td><AnswerActions upvote={()=>props.vote(e.id, 1)} downvote={()=>props.vote(e.id, -1)}
-                delete={()=>props.delete(e.id)} edit={()=>props.edit(e.id)} /></td>
+                delete={()=>props.delete(e.id)} editId={e.id} /></td>
       </tr>
     );
   }

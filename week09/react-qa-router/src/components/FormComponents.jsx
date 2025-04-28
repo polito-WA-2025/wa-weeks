@@ -1,11 +1,29 @@
 import { useState } from 'react';
-import { Form, Button, Alert } from 'react-bootstrap';
+import { Form, Button, Alert, Row, Col } from 'react-bootstrap';
 
 import dayjs from 'dayjs';
+import { useNavigate, useParams } from 'react-router';
+
+
+function FormRoute(props) {
+    return (
+        <Row>
+            <Col>
+                <AnswerForm . . . />
+            </Col>
+        </Row>
+    )
+}
 
 
 function AnswerForm(props) {
-    const objToEdit = props.editObj;
+    const navigate = useNavigate();
+
+    const { answerId } = useParams();
+
+    const objToEdit = props.answerList.find( e => e.id === parseInt(answerId));
+
+    //const objToEdit = props.editObj;
 
     const [date, setDate] = useState(objToEdit? objToEdit.date.format('YYYY-MM-DD') : dayjs().format('YYYY-MM-DD'));
     const [text, setText] = useState(objToEdit? objToEdit.text : '');
@@ -40,8 +58,10 @@ function AnswerForm(props) {
             if (objToEdit) {  // decide if this is an edit or an add
                 ans.id = objToEdit.id;
                 props.saveExistingAnswer(ans);
+                navigate('/');
             } else {
                 props.addAnswer(ans);
+                navigate('/');
             }
 
         }
@@ -78,11 +98,11 @@ function AnswerForm(props) {
             </Form.Group>
 
             <Button type="submit">{objToEdit? 'Save edit':'Add'}</Button>
-            <Button variant='secondary' onClick={()=>props.closeForm()}>Cancel</Button>
+            <Button variant='secondary' onClick={()=>navigate('/')}>Cancel</Button>
 
         </Form>
         </>
     )
 }
 
-export { AnswerForm };
+export { FormRoute };
