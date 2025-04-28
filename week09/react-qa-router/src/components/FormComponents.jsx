@@ -9,7 +9,8 @@ function FormRoute(props) {
     return (
         <Row>
             <Col>
-                <AnswerForm . . . />
+                <AnswerForm addAnswer={props.addAnswer} saveExistingAnswer={props.saveExistingAnswer}
+                  answerList={props.answerList} />
             </Col>
         </Row>
     )
@@ -18,10 +19,15 @@ function FormRoute(props) {
 
 function AnswerForm(props) {
     const navigate = useNavigate();
+    
+    /* If we have an answerId in the URL, we retrieve the answer to edit from the list.
+    In a full-stack application, starting from the answerId, 
+    we could query the back-end to retrieve all the answer data (updated to last value). */
 
     const { answerId } = useParams();
 
-    const objToEdit = props.answerList.find( e => e.id === parseInt(answerId));
+    // Need to check if  props.answerList is set because in /add  answerList is not passed, otherwise the code will crash
+    const objToEdit = props.answerList && props.answerList.find( e => e.id === parseInt(answerId));
 
     //const objToEdit = props.editObj;
 
@@ -97,9 +103,10 @@ function AnswerForm(props) {
                 <Form.Control type="number" name="score" value={score} onChange={handleScore} />
             </Form.Group>
 
-            <Button type="submit">{objToEdit? 'Save edit':'Add'}</Button>
-            <Button variant='secondary' onClick={()=>navigate('/')}>Cancel</Button>
-
+            <div className='my-2'>
+                <Button type="submit">{objToEdit? 'Save edit':'Add'}</Button>
+                <Button variant='secondary' onClick={()=>navigate('/')}>Cancel</Button>
+            </div>
         </Form>
         </>
     )

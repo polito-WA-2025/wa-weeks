@@ -37,18 +37,12 @@ function MyFooter(props) {
 }
 
 
-
-function Main(props) {
+function AnswerRoute(props) {   // former Main component
 
   // ROUTES 
   // /  = initial page  (list of answers)
   // /add = show the form needed to add a new answer
   // /edit/:id  = show the form to edit an answer  (identified by :id)
-
-  //const [ showForm, setShowForm ] = useState(false);
-
-  //const [ editObj, setEditObj ] = useState(undefined);
-
 
 
   return (<>
@@ -68,19 +62,9 @@ function Main(props) {
     </Row>
     <Row>
       <Col>
-        {/* key in AnswerForm is needed to make React re-create the component when editObj.id changes,
-            i.e., when the editing form is open and another edit button is pressed. */}
-    { /* showForm ?
-         <AnswerForm addAnswer={addAnswer} 
-         closeForm={()=>{setShowForm(false); setEditObj(undefined);}}
-         editObj={editObj} saveExistingAnswer={saveExistingAnswer} 
-         key={editObj ? editObj.id : -1} />
-         : 
-*/}
          <Link to='/add'>
            <Button>Add something</Button>
          </Link>
-    
          </Col>
     </Row> 
   </>
@@ -89,7 +73,15 @@ function Main(props) {
 
 function App() {
 
+    // state moved up into App
+
   const [ answers, setAnswers ] = useState(initialAnswerList);
+
+    // Not needed anymore, the info about the object are retrieved by using the id in the URL
+    //const [ editObj, setEditObj ] = useState(undefined);
+  
+    // Not needed anymore, this state is "sort of" substituted by the /add URL
+    //const [ showForm, setShowForm ] = useState(false);
 
   function voteAnswer(id, delta) {
     setAnswers(answerList =>
@@ -128,7 +120,7 @@ function App() {
   return (
     <Routes>
       <Route path='/' element={ <Layout /> } >
-        <Route index  element={ <Main answers={answers}
+        <Route index  element={ <AnswerRoute answers={answers}
           voteAnswer={voteAnswer} deleteAnswer={deleteAnswer} /> } />
         <Route path='/add' element={ <FormRoute addAnswer={addAnswer} /> } />
         <Route path='/edit/:answerId' element={ <FormRoute 
@@ -142,7 +134,7 @@ function App() {
 }
 
 
-function Layout() {
+function Layout(props) {
 
   return (
     <Container fluid>
