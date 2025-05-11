@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "flip-text": "^1.2.0",
+    "index.js": "^0.0.3"
+  }
+}
