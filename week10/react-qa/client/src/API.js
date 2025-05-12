@@ -12,7 +12,7 @@ async function getQuestion(id) {
     const question = await response.json();
     if (response.ok) {
         const e = question;
-        return {id: e.id, text: e.text, author: e.author, date: dayjs(e.date)};
+        return {id: e.id, text: e.text, questioner: e.author, date: dayjs(e.date)};
     } else {
         throw question;  // expected to be a json object (coming from the server) with info about the error
     }

@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { useEffect, useState } from 'react';
-import { Col, Container, Row, Navbar, Button } from 'react-bootstrap';
+import { Col, Container, Row, Navbar, Button, Spinner } from 'react-bootstrap';
 import { Routes, Route, Outlet, Link } from 'react-router';
 import './App.css';
 
@@ -9,11 +9,13 @@ import { AnswerTable } from './components/AnswerComponents.jsx';
 import { QuestionDescription } from './components/QuestionComponents.jsx';
 import { FormRoute } from './components/FormComponents.jsx';
 
-import { Question } from './QAModels.js';
+//import { Question } from './QAModels.js';
 
-const question = new Question(1, 'Best way of enumerating an array in JS?', 'Enrico', '2024-03-01');
-question.init();
-const initialAnswerList = question.getAnswers();
+import API from './API.js';
+
+//const question = new Question(1, 'Best way of enumerating an array in JS?', 'Enrico', '2024-03-01');
+//question.init();
+//const initialAnswerList = question.getAnswers();
 
 
 function MyHeader(props) {
@@ -74,7 +76,23 @@ function AnswerRoute(props) {   // former Main component
 function App() {
     // state moved up into App
 
-  const [ answers, setAnswers ] = useState(initialAnswerList);
+  const [question, setQuestion] = useState({});
+  const [ answers, setAnswers ] = useState([]);
+
+  const [waiting, setWaiting] = useState(true);
+
+  useEffect( ()=> {
+    const questionId = 1;
+     API.getQuestion(questionId)
+       .then(q => setQuestion(q));
+
+     API.getAnswersByQuestionId(questionId)
+       .then(answerList => {
+        setAnswers(answerList);
+        setWaiting(false);
+       });
+       
+  }, []);
 
   function voteAnswer(id, delta) {
     setAnswers(answerList =>
@@ -112,7 +130,9 @@ function App() {
   return (
     <Routes>
       <Route path='/' element={ <Layout /> } >
-        <Route index  element={ <AnswerRoute answers={answers} question={question}
+        <Route index  element={ waiting ?
+        <Row><Col><Spinner /></Col></Row>
+        : <AnswerRoute answers={answers} question={question}
           voteAnswer={voteAnswer} deleteAnswer={deleteAnswer} /> } />
         <Route path='/add' element={ <FormRoute addAnswer={addAnswer} /> } />
         <Route path='/edit/:answerId' element={ <FormRoute 
