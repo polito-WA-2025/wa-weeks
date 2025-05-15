@@ -81,18 +81,24 @@ function App() {
 
   const [initialLoading, setInitialLoading] = useState(true);
 
+  const [dirty, setDirty] = useState(true);
+
+  const questionId = 1;
   useEffect( ()=> {
-    const questionId = 1;
      API.getQuestion(questionId)
        .then(q => setQuestion(q));
-
-     API.getAnswersByQuestionId(questionId)
-       .then(answerList => {
-        setAnswers(answerList);
-        setInitialLoading(false);
-       });
-       
   }, []);
+
+  useEffect(() => {
+    if (dirty)
+      API.getAnswersByQuestionId(questionId)
+        .then(answerList => {
+          setAnswers(answerList);
+          setInitialLoading(false);
+          setDirty(false);
+        });
+
+  }, [dirty]);
 
   function voteAnswer(id, delta) {
     setAnswers(answerList =>
@@ -101,9 +107,19 @@ function App() {
   }
 
   function deleteAnswer(id) {
+    /*
     setAnswers(answerList =>
       answerList.filter(e => e.id !== id)
     );
+    */
+
+    setAnswers(answerList =>
+      answerList.map( e => e.id === id ? Object.assign({}, e, {status:'deleted'}) : e)
+    );
+
+    API.deleteAnswer(id)
+      .then( () => setDirty(true)
+     );
   }
 
 

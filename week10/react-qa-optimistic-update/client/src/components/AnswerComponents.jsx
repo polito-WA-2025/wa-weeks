@@ -18,8 +18,25 @@ function AnswerActions(props) {
 
 function AnswerRow(props) {
     const e = props.answer;
+
+    let statusClass = null;
+
+    switch(e.status) {
+      case 'added':
+        statusClass = 'table-success';
+        break;
+      case 'deleted':
+        statusClass = 'table-danger';
+        break;
+      case 'updated':
+        statusClass = 'table-warning';
+        break;
+      default:
+        break;
+    }
+
     return (
-      <tr>
+      <tr className={statusClass}>
         <td>{e.date.format("YYYY-MM-DD")}</td>
         <td>{e.text}</td>
         <td>{e.respondent}</td>

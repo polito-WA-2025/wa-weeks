@@ -182,7 +182,7 @@ app.delete('/api/answers/:id', [
     // since the final status of the server is that the element with that id does not exist.
     // This is also consistent with the fact that DELETE should be idempotent.
     // However, for easier debugging, we send the number of affected (changed) rows to the client.
-    res.json(numRowChanges);
+    setTimeout( ()=>res.json(numRowChanges), 1000);
   } catch(err) {
     console.log(err);
     res.status(503).json({ error: `Database error during the deletion of answer ${req.params.id}.`});
