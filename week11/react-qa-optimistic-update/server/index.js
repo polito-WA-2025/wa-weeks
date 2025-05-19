@@ -88,6 +88,7 @@ app.get('/api/answers/:id', async (req, res) => {
 app.post('/api/answers', [
   check('score').isInt(),
   check('respondent').isLength({min: 1}),   // as an example
+  check('questionId').isInt(),
   check('date').isDate({format: 'YYYY-MM-DD', strictMode: true})
 ], async (req, res) => {
   const errors = validationResult(req);
