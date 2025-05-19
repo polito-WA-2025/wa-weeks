@@ -79,7 +79,7 @@ async function getAnswersByQuestionId(id) {
       }).then((response) => {
         if (response.ok) {
           response.json()
-            .then((id) => resolve(id))
+            .then((answer) => resolve(answer))
             .catch(() => { reject({ error: "Cannot parse server response." }) }); // something else
         } else {
           // analyze the cause of error

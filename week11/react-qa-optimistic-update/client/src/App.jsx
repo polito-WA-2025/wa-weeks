@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { useEffect, useState } from 'react';
-import { Col, Container, Row, Navbar, Button, Spinner } from 'react-bootstrap';
+import { Col, Container, Row, Navbar, Button, Spinner, Alert } from 'react-bootstrap';
 import { Routes, Route, Outlet, Link } from 'react-router';
 import './App.css';
 
@@ -48,6 +48,9 @@ function AnswerRoute(props) {   // former Main component
 
 
   return (<>
+    {props.errorMsg? <Row><Col><Alert
+    variant='danger' dismissible onClose={()=>props.setErrorMsg('')}>
+      {props.errorMsg}</Alert></Col></Row> : null}
     <Row>
       <QuestionDescription question={props.question} />
     </Row>
@@ -83,6 +86,24 @@ function App() {
 
   const [dirty, setDirty] = useState(true);
 
+  const [errorMsg, setErrorMsg] = useState('');
+
+
+  function handleError(err) {
+    console.log(err);
+    let errMsg = 'Unkwnown error';
+    if (err.errors)
+      if (err.errors[0].msg)
+        errMsg = err.errors[0].msg;
+    else if (err.error)
+      errMsg = err.error;
+        
+    setErrorMsg(errMsg);
+
+    setTimeout(()=>setDirty(true), 2000);  // Fetch the current version from server, after a while
+  }
+
+
   const questionId = 1;
   useEffect( ()=> {
      API.getQuestion(questionId)
@@ -90,20 +111,23 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (dirty)
-      API.getAnswersByQuestionId(questionId)
+    if (question.id && dirty)
+      API.getAnswersByQuestionId(question.id)
         .then(answerList => {
           setAnswers(answerList);
           setInitialLoading(false);
           setDirty(false);
         });
 
-  }, [dirty]);
+  }, [question.id, dirty]);
 
   function voteAnswer(id, delta) {
     setAnswers(answerList =>
-      answerList.map(e => e.id === id ? Object.assign({}, e, { score: e.score + delta }) : e)
+      answerList.map(e => e.id === id ? Object.assign({}, e, { score: e.score + delta, status: 'updated' }) : e)
     );
+    API.voteAnswer(id, delta)
+      .then( ()=> setDirty(true))
+      .catch( err => handleError(err));
   }
 
   function deleteAnswer(id) {
@@ -118,8 +142,8 @@ function App() {
     );
 
     API.deleteAnswer(id)
-      .then( () => setDirty(true)
-     );
+      .then( () => setDirty(true) )
+      .catch( err => handleError(err) );
   }
 
 
@@ -131,16 +155,24 @@ function App() {
     // To compute a new id on the client side, just do max(all ids)+1. But remember that
     // this is NOT an acceptable solution in a web application since 
     // in general there can be multiple clients, and the server is the place to compute the unique id.
-      answerList => 
-        [...answerList, answer]
+      answerList => {
+        answer.questionId = question.id;
+        answer.status = 'added';
+        return [...answerList, answer];
+      }
     );
+    API.addAnswer(answer)
+      .then( ()=> setDirty(true))
+      .catch( err => handleError(err));
   }
 
   function saveExistingAnswer(ans) {
     setAnswers( answerList =>
-      answerList.map( e => e.id === ans.id ? ans : e)
+      answerList.map( e => e.id === ans.id ? {...ans, status: 'updated'} : e)
     );
-
+    API.updateAnswer(ans)
+      .then( ()=>setDirty(true))
+      .catch( err => handleError(err));
   }
 
   return (
@@ -149,7 +181,8 @@ function App() {
         <Route index  element={ initialLoading ?
         <Row><Col><Spinner /></Col></Row>
         : <AnswerRoute answers={answers} question={question}
-          voteAnswer={voteAnswer} deleteAnswer={deleteAnswer} /> } />
+          voteAnswer={voteAnswer} deleteAnswer={deleteAnswer}
+          errorMsg={errorMsg} setErrorMsg={setErrorMsg} /> } />
         <Route path='/add' element={ <FormRoute addAnswer={addAnswer} /> } />
         <Route path='/edit/:answerId' element={ <FormRoute 
           answerList={answers}
