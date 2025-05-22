@@ -1,17 +1,17 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import { Link, useNavigate } from 'react-router';
 import { Button, Table } from 'react-bootstrap';
-import { Link } from 'react-router';
 
 function AnswerActions(props) {
+  const navigate = useNavigate();
+
   return (
     <>
       <Button className="mx-1" variant="primary" onClick={props.upvote}><i className="bi bi-arrow-up"></i></Button>
       <Button className="mx-1" variant="primary" onClick={props.downvote}><i className="bi bi-arrow-down"></i></Button>
-      <Button className="mx-1" variant="danger" onClick={props.delete}><i className="bi bi-trash"></i></Button>
-      <Link to={`/edit/${props.editId}`} >
-        <Button className="mx-1" variant="warning"><i className="bi bi-pencil"></i></Button>
-      </Link>
+      <Button className="mx-1" variant="danger" onClick={props.delete} disabled={props.disableUserActions}><i className="bi bi-trash"></i></Button>
+      <Button className="mx-1" variant="warning" onClick={()=>navigate(`/edit/${props.editId}`)} disabled={props.disableUserActions}><i className="bi bi-pencil"></i></Button>
     </>
   );
 }
@@ -42,7 +42,8 @@ function AnswerRow(props) {
         <td>{e.respondent}</td>
         <td>{e.score}</td>
         <td><AnswerActions upvote={()=>props.vote(e.id, 1)} downvote={()=>props.vote(e.id, -1)}
-                delete={()=>props.delete(e.id)} editId={e.id} /></td>
+                delete={()=>props.delete(e.id)} editId={e.id}
+                disableUserActions={e.respondentId != props.userId} /></td>
       </tr>
     );
   }
@@ -64,7 +65,8 @@ function AnswerRow(props) {
           {/* the key can also be the answer id, if unique */}
                   {props.listOfAnswers.map( (e,index) => 
                    <AnswerRow key={index} answer={e} vote={props.vote} 
-                   delete={props.delete} edit={props.edit} /> )
+                   delete={props.delete} edit={props.edit} 
+                   userId={props.user && props.user.id } /> )
           }
         </tbody>
       </Table>

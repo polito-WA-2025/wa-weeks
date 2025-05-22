@@ -20,15 +20,26 @@ import { LoginForm } from './components/AuthComponents.jsx';
 
 
 function MyHeader(props) {
+  const name = props.user && props.user.name;
+
 	return (
-		<Navbar bg="primary" variant="dark">
+		<Navbar bg="primary" variant="dark" className="d-flex justify-content-between">
       <Navbar.Brand className="mx-2">
-      <i className="bi bi-collection-play" />
-      {/* props.appName just in case you want to set a different app name */}
-			{props.appName || "HeapOverrun"}
+        <i className="bi bi-collection-play" />
+        {/* props.appName just in case you want to set a different app name */}
+        {props.appName || "HeapOverrun"}
       </Navbar.Brand>
-		</Navbar>
-	);
+      {name ? <div>
+        <Navbar.Text className='fs-5'>
+          {"Signed in as: " + name}
+        </Navbar.Text>
+        <Button className='mx-2' variant='danger' onClick={props.logout}>Logout</Button>
+      </div> :
+        <Link to='/login'>
+          <Button className='mx-2' variant='warning'>Login</Button>
+        </Link>}
+    </Navbar>
+  );
 }
 
 
@@ -66,15 +77,13 @@ function AnswerRoute(props) {   // former Main component
     <Row>
       <Col>
         <AnswerTable listOfAnswers={props.answers} vote={props.voteAnswer} delete={props.deleteAnswer}
-             errorMsg={props.errorMsg} />
+             errorMsg={props.errorMsg} user={props.user} />
       </Col>
     </Row>
     <Row>
       <Col>
-         <Link to='/add'>
-           <Button>Add something</Button>
-         </Link>
-         </Col>
+        <Button disabled={props.user? false: true} onClick={()=>navigate('/add')}>Add something</Button>
+      </Col>
     </Row> 
   </>
   );
@@ -82,14 +91,16 @@ function AnswerRoute(props) {   // former Main component
 
 function App() {
     // state moved up into App
-
   const [question, setQuestion] = useState({});
-  const [ answers, setAnswers ] = useState([]);
+  const [answers, setAnswers ] = useState([]);
   const [initialLoading, setInitialLoading] = useState(true);
 
   const [ dirty, setDirty ] = useState(true);
 
   const [ errorMsg, setErrorMsg ] = useState('');
+
+  const [user, setUser ] = useState(undefined);
+  const [loggedIn, setLoggedIn] = useState(false);
 
   function handleError(err) {
     console.log('handleError: ',err);
@@ -107,12 +118,27 @@ function App() {
 
     if (errMsg === 'Not authenticated')
       setTimeout(() => {  // do logout in the app state
-        //setUser(undefined); setLoggedIn(false); 
-        setDirty(true)
+        setUser(undefined); setLoggedIn(false); setDirty(true)
       }, 2000);
     else
       setTimeout(()=>setDirty(true), 2000);  // Fetch the current version from server, after a while
   }
+
+
+  useEffect(()=> {
+    const checkAuth = async() => {
+      try {
+        // here you have the user info, if already logged in
+        const user = await API.getUserInfo();
+        setLoggedIn(true);
+        setUser(user);
+      } catch(err) {
+        // NO need to do anything: user is simply not yet authenticated
+        //handleError(err);
+      }
+    };
+    checkAuth();
+  }, []);
 
 
   useEffect( () => {
@@ -162,6 +188,7 @@ function App() {
       const newId = Math.max(...answerList.map(e => e.id))+1;
       answer.questionId = question.id;   // Do not forget to add the question ID to which the answer is connected
       answer.id = newId;
+      answer.respondent = user.name;
       answer.status = 'added';
       return [...answerList, answer];
     }
@@ -173,24 +200,39 @@ function App() {
 
   function saveExistingAnswer(answer) {
     setAnswers( answerList => 
-      answerList.map( e => e.id === answer.id ? { ...answer, status: 'updated'} : e)
+      answerList.map( e => e.id === answer.id ? { ...answer, respondent: user.name, status: 'updated'} : e)
     );
     API.updateAnswer(answer)
       .then(() => setDirty(true))
       .catch((err) => handleError(err));
   }
 
+  const doLogOut = async () => {
+    await API.logOut();
+    setLoggedIn(false);
+    setUser(undefined);
+    // setDirty ... ?
+    /* set state to empty if appropriate */
+  }
+
+  const loginSuccessful = (user) => {
+    setUser(user);
+    setLoggedIn(true);
+    setDirty(true);  // load latest version of data, if appropriate
+  }
+
   return (
     <Routes>
-      <Route path='/' element={<Layout />}>
+      <Route path='/' element={<Layout user={user} loggedIn={loggedIn} logout={doLogOut} />}>
           <Route index element={ <AnswerRoute question={question} answers={answers}
             voteAnswer={voteAnswer} deleteAnswer={deleteAnswer} initialLoading={initialLoading}
             errorMsg={errorMsg} setErrorMsg={setErrorMsg}
-            /> } />
+            user={user} /> } />
           <Route path='/add' element={ <FormRoute addAnswer={addAnswer} /> } />
           <Route path='/edit/:answerId' element={<FormRoute answerList={answers}
             saveExistingAnswer={saveExistingAnswer} />} />
       </Route>
+      <Route path='/login' element={loggedIn? <Navigate replace to='/' />:  <LoginForm loginSuccessful={loginSuccessful} />} />
       <Route path='/*' element={<DefaultRoute />} />
     </Routes>
   );
@@ -203,7 +245,7 @@ function Layout(props) {
     <Container fluid>
       <Row>
         <Col>
-          <MyHeader />
+          <MyHeader user={props.user} loggedIn={props.loggedIn} logout={props.logout} />
         </Col>
       </Row>
       <Outlet />
