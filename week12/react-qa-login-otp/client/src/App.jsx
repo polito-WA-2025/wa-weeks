@@ -31,7 +31,7 @@ function MyHeader(props) {
       </Navbar.Brand>
       {name ? <div>
         <Navbar.Text className='fs-5'>
-          {"Signed in as: " + name}
+          {`Signed in ${props.loggedInTotp? '(2FA)' : ''} as: ` + name}
         </Navbar.Text>
         <Button className='mx-2' variant='danger' onClick={props.logout}>Logout</Button>
       </div> :
@@ -77,7 +77,7 @@ function AnswerRoute(props) {   // former Main component
     <Row>
       <Col>
         <AnswerTable listOfAnswers={props.answers} vote={props.voteAnswer} delete={props.deleteAnswer}
-             errorMsg={props.errorMsg} user={props.user} />
+             errorMsg={props.errorMsg} user={props.user} disableTotpActions={props.disableTotpActions} />
       </Col>
     </Row>
     <Row>
@@ -101,6 +101,7 @@ function App() {
 
   const [user, setUser ] = useState(undefined);
   const [loggedIn, setLoggedIn] = useState(false);
+  const [loggedInTotp, setLoggedInTotp] = useState(false);
 
   function handleError(err) {
     console.log('handleError: ',err);
@@ -132,6 +133,8 @@ function App() {
         const user = await API.getUserInfo();
         setLoggedIn(true);
         setUser(user);
+        if (user.isTotp)
+          setLoggedInTotp(true);
       } catch(err) {
         // NO need to do anything: user is simply not yet authenticated
         //handleError(err);
@@ -211,6 +214,7 @@ function App() {
     await API.logOut();
     setLoggedIn(false);
     setUser(undefined);
+    setLoggedInTotp(false);
     /* set app state (list of objects etc.) to empty if appropriate */
   }
 
@@ -222,19 +226,38 @@ function App() {
 
   return (
     <Routes>
-      <Route path='/' element={<Layout user={user} loggedIn={loggedIn} logout={doLogOut} />}>
+      <Route path='/' element={<Layout user={user} loggedIn={loggedIn} logout={doLogOut} loggedInTotp={loggedInTotp} />}>
           <Route index element={ <AnswerRoute question={question} answers={answers}
             voteAnswer={voteAnswer} deleteAnswer={deleteAnswer} initialLoading={initialLoading}
             errorMsg={errorMsg} setErrorMsg={setErrorMsg}
-            user={user} /> } />
+            user={user} disableTotpActions={!loggedInTotp} /> } />
           <Route path='/add' element={ <FormRoute addAnswer={addAnswer} /> } />
           <Route path='/edit/:answerId' element={<FormRoute answerList={answers}
             saveExistingAnswer={saveExistingAnswer} />} />
       </Route>
-      <Route path='/login' element={loggedIn? <Navigate replace to='/' />:  <LoginForm loginSuccessful={loginSuccessful} />} />
+      <Route path='/login' element={ 
+         <LoginWithTotp loginSuccessful={loginSuccessful} loggedIn={loggedIn} user={user} 
+           loggedInTotp={loggedInTotp} setLoggedInTotp={setLoggedInTotp} />} />
       <Route path='/*' element={<DefaultRoute />} />
     </Routes>
   );
+}
+
+
+function LoginWithTotp(props) {
+  if (props.loggedIn) {
+    if (props.user.canDoTotp) {
+        if (props.loggedInTotp) {
+        return <Navigate replace to='/' />;
+      } else {
+        return <TotpForm totpSuccessful={() => props.setLoggedInTotp(true)} />;
+      }
+    } else {
+      return <Navigate replace to='/' />;
+    }
+  } else {
+    return <LoginForm loginSuccessful={props.loginSuccessful} />;
+  }
 }
 
 
@@ -244,7 +267,7 @@ function Layout(props) {
     <Container fluid>
       <Row>
         <Col>
-          <MyHeader user={props.user} loggedIn={props.loggedIn} logout={props.logout} />
+          <MyHeader user={props.user} loggedIn={props.loggedIn} logout={props.logout} loggedInTotp={props.loggedInTotp} />
         </Col>
       </Row>
       <Outlet />

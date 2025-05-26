@@ -10,7 +10,7 @@ function AnswerActions(props) {
     <>
       <Button className="mx-1" variant="primary" onClick={props.upvote}><i className="bi bi-arrow-up"></i></Button>
       <Button className="mx-1" variant="primary" onClick={props.downvote}><i className="bi bi-arrow-down"></i></Button>
-      <Button className="mx-1" variant="danger" onClick={props.delete} disabled={props.disableUserActions}><i className="bi bi-trash"></i></Button>
+      <Button className="mx-1" variant="danger" onClick={props.delete} disabled={props.disableUserActions || props.disableTotpActions}><i className="bi bi-trash"></i></Button>
       <Button className="mx-1" variant="warning" onClick={()=>navigate(`/edit/${props.editId}`)} disabled={props.disableUserActions}><i className="bi bi-pencil"></i></Button>
     </>
   );
@@ -43,7 +43,8 @@ function AnswerRow(props) {
         <td>{e.score}</td>
         <td><AnswerActions upvote={()=>props.vote(e.id, 1)} downvote={()=>props.vote(e.id, -1)}
                 delete={()=>props.delete(e.id)} editId={e.id}
-                disableUserActions={e.respondentId != props.userId} /></td>
+                disableUserActions={e.respondentId != props.userId}
+                disableTotpActions={props.disableTotpActions} /></td>
       </tr>
     );
   }
@@ -65,7 +66,7 @@ function AnswerRow(props) {
           {/* the key can also be the answer id, if unique */}
                   {props.listOfAnswers.map( (e,index) => 
                    <AnswerRow key={index} answer={e} vote={props.vote} delete={props.delete} edit={props.edit}
-                   userId={props.user && props.user.id } /> )
+                   userId={props.user && props.user.id } disableTotpActions={props.disableTotpActions} /> )
           }
         </tbody>
       </Table>

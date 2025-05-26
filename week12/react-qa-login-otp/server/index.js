@@ -286,6 +286,7 @@ app.delete('/api/answers/:id', isLoggedIn, isTotp, [
 
 function clientUserInfo(req) {
   const user=req.user;
+  console.log(JSON.stringify(req.user));
 	return {id: user.id, username: user.username, name: user.name, canDoTotp: user.secret? true: false, isTotp: req.session.method === 'totp'};
 }
 
