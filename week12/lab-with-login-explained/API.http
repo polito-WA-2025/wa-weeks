@@ -1,0 +1,40 @@
+# This file could be used for testing the API with Visual Studio Code
+
+## Test API
+GET http://localhost:3001/api/touch HTTP/1.1
+
+###
+
+## Authenticate user
+POST http://localhost:3001/api/sessions HTTP/1.1
+content-type: application/json
+
+{
+    "username": "u1@p.it",
+    "password": "pwd"
+}
+###
+
+## Fail user authentication
+POST http://localhost:3001/api/sessions HTTP/1.1
+content-type: application/json
+
+{
+    "username": "u1@p.it",
+    "password": "123"
+}
+###
+
+## Retrieve the current user.
+GET http://localhost:3001/api/sessions/current HTTP/1.1
+###
+
+## Delete the current user.
+DELETE http://localhost:3001/api/sessions/current HTTP/1.1
+###
+
+
+## Retrieve a specific film specifing its ID (test multiple times, if the film does not belong to u1, the film is not found 
+GET http://localhost:3001/api/films/{{$randomInt 1 7}} HTTP/1.1
+###
+
