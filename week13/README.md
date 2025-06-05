@@ -1,24 +1,33 @@
-# Exam #1234: "Exam Title"
-## Student: s123456 LASTNAME FIRSTNAME 
+# Exam #1: "Study Plan"
+## Student: s999999 MASALA ENRICO 
 
 ## React Client Application Routes
 
-- Route `/`: page content and purpose
-- Route `/something/:param`: page content and purpose, param specification
-- ...
+- Route `/`: home, list of courses, anybody can access it
+- Route `/login`: login form (including TOTP form needed)
+- Route `/studyplan`: list of courses with the study plan
 
 ## API Server
 
-- POST `/api/login`
-  - request parameters and request body content
-  - response body content
-- GET `/api/something`
-  - request parameters
-  - response body content
-- POST `/api/something`
-  - request parameters and request body content
-  - response body content
-- ...
+- GET `/api/courses`
+  - returns the list of all courses, with the details (constraints, enrolled students, max)
+  - response body: [{"code":"02LSEOV", "name":"Web Applications", "CFU":8,
+      "preparatory": null, "incompat": ["02GOLOV", ...], "maxStudents": null }, ...]
+- POST `/api/session`
+  - authenticates the user, return user information (studyplan?)
+- GET `/api/studyplan`  (Authenticated API)
+  - returns the studyplan of the authenticated user
+  - response body: {"courses": ["02LSEOV", "02ABCOV", ...], "fullTime": false}
+- POST `/api/studyplan`  (Authenticated API)
+  - create or save(overwrite) the studyplan
+  - request body: {"courses": ["02LSEOV", "02ABCOV", ...], "fullTime": false}
+- DELETE `/api/studyplan`  (Authenticated API, requires TOTP)
+  - deletes the studyplan
+
+- GET `/api/session/current`
+  - returns info about authenticated user (id), (+studyplan?)
+- DELETE `/api/session/current`
+- POST `/api/totp-login`
 
 ## Database Tables
 
